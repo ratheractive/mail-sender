@@ -23,5 +23,6 @@ export default {
     TO_EMAIL: ensure('TO_EMAIL', 'info@example.com'),
     CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'Confirmation: Your email regarding "{subject}" was received'),
     CONFIRMATION_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-received-confirmation.hbs'), 'utf-8'),
+    FORM_TO_SMTP_SUBJECT: ensure('FORM_TO_SMTP_SUBJECT', 'From Web Form: "{subject}"'),
     FORM_TO_SMTP_TEMPLATE: readFileSync(path.resolve(__dirname,'..', 'templates', 'form-to-smtp-text.hbs'), 'utf-8')
 };
