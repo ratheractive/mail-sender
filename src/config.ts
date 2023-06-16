@@ -1,0 +1,27 @@
+import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
+import path from 'path';
+
+dotenv.config();
+
+function ensure(key: string, defaultValue?: string): string {
+    const value = process.env[key] || defaultValue;
+
+    if (value == null) {
+        throw new Error(`Config error - missing env.${key}`);
+    }
+
+    return value;
+}
+
+export default {
+    PORT: ensure('PORT', '3000'),
+    SMTP_HOST: ensure('SMTP_HOST', 'smtp.example.com'),
+    SMTP_PORT: ensure('SMTP_PORT', '465'),
+    SMTP_USER: ensure('SMTP_USER'),
+    SMTP_PASS: ensure('SMTP_PASS'),
+    TO_EMAIL: ensure('TO_EMAIL', 'info@example.com'),
+    CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'Confirmation: Your email regarding "{subject}" was received'),
+    CONFIRMATION_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-received-confirmation.hbs'), 'utf-8'),
+    FORM_TO_SMTP_TEMPLATE: readFileSync(path.resolve(__dirname,'..', 'templates', 'form-to-smtp-text.hbs'), 'utf-8')
+};
