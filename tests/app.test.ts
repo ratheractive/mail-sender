@@ -1,3 +1,7 @@
+process.env.SMTP_USER = 'test_user';
+process.env.SMTP_PASSWORD = 'test_pass';
+process.env.TO_EMAIL = 'toemail@mydomain.test';
+
 import request from 'supertest';
 import app from '../src/app'; // export your Express application from your server file
 
@@ -29,7 +33,7 @@ describe('POST /send-mail', () => {
     expect(res.body).toHaveProperty('message');
     expect(res.body).toHaveProperty('messageId');
     expect(mockSendMail).toHaveBeenCalledTimes(2)
-    expect(mockSendMail).toHaveBeenNthCalledWith(1, "test@test.com", "your_toemail", "From Web Form: \"No Subject\"", `Hello,
+    expect(mockSendMail).toHaveBeenNthCalledWith(1, "test@test.com", "toemail@mydomain.test", "From Web Form: \"No Subject\"", `Hello,
 
 This is a message from Anonymous.
 
@@ -41,7 +45,7 @@ Test message
 Regards,
 Anonymous
 `);
-    expect(mockSendMail).toHaveBeenNthCalledWith(2, "your_toemail", "test@test.com", "Confirmation: Your email regarding \"No Subject\" was received", `Hi Anonymous,
+    expect(mockSendMail).toHaveBeenNthCalledWith(2, "toemail@mydomain.test", "test@test.com", "Confirmation: Your email regarding \"No Subject\" was received", `Hi Anonymous,
 
 We have received your email with the subject \"No Subject\". Here is a copy of your message:
 

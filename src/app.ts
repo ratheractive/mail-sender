@@ -19,7 +19,7 @@ let transporter = nodemailer.createTransport({
     secure: true,
     auth: {
         user: config.SMTP_USER,
-        pass: config.SMTP_PASS
+        pass: config.SMTP_PASSWORD
     }
 });
 
