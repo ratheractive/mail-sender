@@ -27,5 +27,5 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ steps.extract-tag.outputs.tag }}
+        tags: ratheractive/mail-sender:${{ steps.extract-tag.outputs.tag }}
         labels: ${{ steps.meta.outputs.labels }}
