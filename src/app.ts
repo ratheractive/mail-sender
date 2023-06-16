@@ -90,6 +90,8 @@ app.post('/send-mail', upload.none(),
         }
     });
 
-//app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
+if (process.env.TS_JEST == undefined) {
+    app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
+}
 
 export default app
