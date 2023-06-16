@@ -16,12 +16,34 @@ app.use(bodyParser.json());
 let transporter = nodemailer.createTransport({
     host: config.SMTP_HOST,
     port: Number(config.SMTP_PORT),
-    secure: true, // change to false if the port is not 465
+    secure: true,
     auth: {
         user: config.SMTP_USER,
         pass: config.SMTP_PASS
     }
 });
+
+console.log('SMTP transport created.');
+
+const sendConfirmationEmail = async (from: string, name: string, subject: string, originalMessage: string) => {
+    let confirmationSubject = config.CONFIRMATION_SUBJECT.replace("{subject}", subject);
+    let template = Handlebars.compile(config.CONFIRMATION_TEMPLATE);
+    let confirmationText = template({ name, subject, originalMessage });
+
+    let confirmationMailOptions = {
+        from: config.TO_EMAIL,
+        to: from,
+        subject: confirmationSubject,
+        text: confirmationText
+    };
+
+    try {
+        let confirmationInfo = await transporter.sendMail(confirmationMailOptions);
+        console.log(`Confirmation email sent: ${confirmationInfo.messageId}`);
+    } catch (err) {
+        console.error('Error sending confirmation email:', err);
+    }
+}
 
 app.post('/send-mail', upload.none(),
     body('from').isEmail().withMessage('From is not a valid email'),
@@ -29,14 +51,18 @@ app.post('/send-mail', upload.none(),
     body('subject').default('No Subject'),
     body('name').default('Anonymous'),
     async (req, res) => {
+        console.log('Received a new request.');
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            console.log('Validation errors:', errors.array());
             return res.status(422).json({ errors: errors.array() });
         }
 
         const { from, subject, message, name } = req.body;
 
-        // create the smtp email body using a handlebars template
+        console.log(`Sending email from ${from} with subject "${subject}"`);
+
         let smtpTemplate = Handlebars.compile(config.FORM_TO_SMTP_TEMPLATE);
         let smtpText = smtpTemplate({ name, subject, message });
 
@@ -48,31 +74,18 @@ app.post('/send-mail', upload.none(),
                 text: smtpText
             };
 
-            // Send mail with defined transport object
             let info = await transporter.sendMail(mailOptions);
+            console.log(`Email sent: ${info.messageId}`);
 
-            // Send a confirmation email back to the sender
-            let confirmationSubject = config.CONFIRMATION_SUBJECT.replace("{subject}", subject);
-            let template = Handlebars.compile(config.CONFIRMATION_TEMPLATE);
-            let confirmationText = template({ name, subject });
-
-            let confirmationMailOptions = {
-                from: config.TO_EMAIL,
-                to: from,
-                subject: confirmationSubject,
-                text: confirmationText
-            };
-
-            let confirmationInfo = await transporter.sendMail(confirmationMailOptions);
+            // Sending confirmation email is now separate from the main logic
+            sendConfirmationEmail(from, name, subject, message);
 
             res.status(200).json({
                 message: 'Email sent',
                 messageId: info.messageId,
-                confirmationMessage: 'Confirmation email sent',
-                confirmationMessageId: confirmationInfo.messageId
             });
         } catch (err) {
-            console.error(err);
+            console.error('Error sending email:', err);
             res.status(500).json({ message: 'Error sending email' });
         }
     });
