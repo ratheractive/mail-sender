@@ -2,14 +2,15 @@
   "name": "mail-sender",
   "version": "1.0.0",
   "description": "http post endpoint that sends emails using smtp",
-  "main": "dist/index.js",
+  "main": "src/app.ts",
   "author": "Rather Active",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc -p ."
+    "start": "node dist/app.js",
+    "dev": "nodemon src/app.ts",
+    "build": "tsc -p .",
+    "test": "jest"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
@@ -22,10 +23,15 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.2",
     "@types/multer": "^1.4.7",
     "@types/node": "^20.3.1",
     "@types/nodemailer": "^6.4.8",
+    "@types/supertest": "^2.0.12",
+    "jest": "^29.5.0",
     "nodemon": "^2.0.22",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   }
