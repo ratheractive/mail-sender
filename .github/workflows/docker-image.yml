@@ -2,7 +2,7 @@ name: Docker Image CI
 on:
   push:
     tags:
-      - 'v*.*.*'    
+      - 'v*.*.*'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,9 +13,6 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Extract Tag Number
-      id: extract-tag
-      run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/v}"
     - name: Extract metadata (tags, labels) for Docker
       id: meta
       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
@@ -27,5 +24,5 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ratheractive/mail-sender:${{ steps.extract-tag.outputs.tag }}
+        tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
