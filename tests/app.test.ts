@@ -3,6 +3,7 @@ process.env.SMTP_USER = 'test_user';
 process.env.SMTP_PASSWORD = 'test_pass';
 process.env.TO_EMAIL = 'toemail@mydomain.test';
 process.env.FROM_EMAIL= 'from@domain.test';
+process.env.DUMMY_MODE= 'false';
 
 import request from 'supertest';
 import app from '../src/app'; // export your Express application from your server file

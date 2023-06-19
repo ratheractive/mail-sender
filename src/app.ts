@@ -1,18 +1,19 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import nodemailer from 'nodemailer';
+import nodemailer, { SentMessageInfo } from 'nodemailer';
 import config from './config';
 import Handlebars from 'handlebars';
 import multer from 'multer';
 import cors from 'cors';
 import { body, validationResult } from 'express-validator';
+import Mail from 'nodemailer/lib/mailer';
 
 const app = express();
 const port = config.PORT;
 
 const upload = multer();
 
-app.use(cors({origin: config.CORS_ORIGINS}));
+app.use(cors({ origin: config.CORS_ORIGINS }));
 app.use(bodyParser.json());
 
 let transporter = nodemailer.createTransport({
@@ -27,6 +28,13 @@ let transporter = nodemailer.createTransport({
 
 console.log('SMTP transport created.');
 
+const sendMail = (mailOptions: Mail.Options): Promise<SentMessageInfo> => {
+    if(config.DUMMY_MODE){
+        return Promise.resolve<SentMessageInfo>({messageId: "message-id"})
+    }
+    return transporter.sendMail(mailOptions)
+}
+
 const sendConfirmationEmail = async (from: string, name: string, subject: string, originalMessage: string) => {
     let confirmationSubject = config.CONFIRMATION_SUBJECT.replace("{subject}", subject);
     let template = Handlebars.compile(config.CONFIRMATION_TEMPLATE);
@@ -40,7 +48,7 @@ const sendConfirmationEmail = async (from: string, name: string, subject: string
     };
 
     try {
-        let confirmationInfo = await transporter.sendMail(confirmationMailOptions);
+        let confirmationInfo = await sendMail(confirmationMailOptions);
         console.log(`Confirmation email sent: ${confirmationInfo.messageId}`);
     } catch (err) {
         console.error('Error sending confirmation email:', err);
@@ -83,7 +91,7 @@ app.post('/send-mail', upload.none(),
                 text: smtpText
             };
 
-            let info = await transporter.sendMail(mailOptions);
+            let info = await sendMail(mailOptions);
             console.log(`Email sent: ${info.messageId}`);
 
             // Sending confirmation email is now separate from the main logic

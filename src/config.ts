@@ -16,6 +16,7 @@ function ensure(key: string, defaultValue?: string): string {
 
 export default {
     PORT: ensure('PORT', '3000'),
+    DUMMY_MODE: ensure('DUMMY_MODE', 'false') == 'true',
     SMTP_HOST: ensure('SMTP_HOST'),
     SMTP_PORT: ensure('SMTP_PORT', '465'),
     SMTP_USER: ensure('SMTP_USER'),
