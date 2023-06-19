@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import config from './config';
 import Handlebars from 'handlebars';
 import multer from 'multer';
+import cors from 'cors';
 import { body, validationResult } from 'express-validator';
 
 const app = express();
@@ -11,6 +12,7 @@ const port = config.PORT;
 
 const upload = multer();
 
+app.use(cors({origin: config.CORS_ORIGINS}));
 app.use(bodyParser.json());
 
 let transporter = nodemailer.createTransport({
