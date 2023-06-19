@@ -45,6 +45,12 @@ const sendConfirmationEmail = async (from: string, name: string, subject: string
     }
 }
 
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        "status": "ok"
+    })
+});
+
 app.post('/send-mail', upload.none(),
     body('from').isEmail().withMessage('From is not a valid email'),
     body('message').isLength({ min: 1 }).withMessage('Message is required'),
