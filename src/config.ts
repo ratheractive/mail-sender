@@ -16,11 +16,12 @@ function ensure(key: string, defaultValue?: string): string {
 
 export default {
     PORT: ensure('PORT', '3000'),
-    SMTP_HOST: ensure('SMTP_HOST', 'smtp.example.com'),
+    SMTP_HOST: ensure('SMTP_HOST'),
     SMTP_PORT: ensure('SMTP_PORT', '465'),
     SMTP_USER: ensure('SMTP_USER'),
     SMTP_PASSWORD: ensure('SMTP_PASSWORD'),
-    TO_EMAIL: ensure('TO_EMAIL', 'info@example.com'),
+    FROM_EMAIL: ensure('FROM_EMAIL'),
+    TO_EMAIL: ensure('TO_EMAIL'),
     CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'Confirmation: Your email regarding "{subject}" was received'),
     CONFIRMATION_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-received-confirmation.hbs'), 'utf-8'),
     FORM_TO_SMTP_SUBJECT: ensure('FORM_TO_SMTP_SUBJECT', 'From Web Form: "{subject}"'),

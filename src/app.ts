@@ -7,7 +7,7 @@ import multer from 'multer';
 import { body, validationResult } from 'express-validator';
 
 const app = express();
-const port = process.env.PORT;
+const port = config.PORT;
 
 const upload = multer();
 
@@ -31,7 +31,7 @@ const sendConfirmationEmail = async (from: string, name: string, subject: string
     let confirmationText = template({ name, subject, originalMessage });
 
     let confirmationMailOptions = {
-        from: config.TO_EMAIL,
+        from: config.FROM_EMAIL,
         to: from,
         subject: confirmationSubject,
         text: confirmationText
@@ -61,7 +61,7 @@ app.post('/send-mail', upload.none(),
 
         const { from, subject, message, name } = req.body;
 
-        console.log(`Sending email from ${from} with subject "${subject}"`);
+        console.log(`Sending email from`);
 
         let smtpSubject = config.FORM_TO_SMTP_SUBJECT.replace("{subject}", subject);
         let smtpTemplate = Handlebars.compile(config.FORM_TO_SMTP_TEMPLATE);
@@ -69,7 +69,7 @@ app.post('/send-mail', upload.none(),
 
         try {
             let mailOptions = {
-                from: from,
+                from: config.FROM_EMAIL,
                 to: config.TO_EMAIL,
                 subject: smtpSubject,
                 text: smtpText
@@ -92,7 +92,15 @@ app.post('/send-mail', upload.none(),
     });
 
 if (process.env.TS_JEST == undefined) {
-    app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
+    const server = app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
+
+    ['SIGHUP', 'SIGINT', 'SIGTERM'].forEach((signal) => {
+        process.on(signal, () => {
+            server.close(() => {
+                console.log(`server stopped by ${signal}`)
+            })
+        })
+    })
 }
 
 export default app
