@@ -22,4 +22,4 @@ ENV PORT 80
 # ENV FORM_TO_SMTP_SUBJECT
 
 COPY --chown=nobody --from=builder /opt/app/dist /opt/app/dist
-CMD ["dist/main.js"]
+CMD ["dist/app.js"]
