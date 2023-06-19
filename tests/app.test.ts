@@ -35,17 +35,12 @@ describe('POST /send-mail', () => {
     expect(res.body).toHaveProperty('message');
     expect(res.body).toHaveProperty('messageId');
     expect(mockSendMail).toHaveBeenCalledTimes(2)
-    expect(mockSendMail).toHaveBeenNthCalledWith(1, "from@domain.test", "toemail@mydomain.test", "From Web Form: \"No Subject\"", `Hello,
+    expect(mockSendMail).toHaveBeenNthCalledWith(1, "from@domain.test", "toemail@mydomain.test", "From Web Form: \"No Subject\"", `Message from Anonymous (client@external.com)
 
-This is a message from Anonymous.
-
-Subject: From Web Form: &quot;No Subject&quot;
+Subject: No Subject
 
 Message:
 Test message
-
-Regards,
-Anonymous
 `);
     expect(mockSendMail).toHaveBeenNthCalledWith(2, "from@domain.test", "client@external.com", "Confirmation: Your email regarding \"No Subject\" was received", `Hi Anonymous,
 

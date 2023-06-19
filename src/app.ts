@@ -69,10 +69,10 @@ app.post('/send-mail', upload.none(),
 
         console.log(`Sending email from`);
 
-        let smtpSubject = config.FORM_TO_SMTP_SUBJECT.replace("{subject}", subject);
         let smtpTemplate = Handlebars.compile(config.FORM_TO_SMTP_TEMPLATE);
-        let smtpText = smtpTemplate({ name, subject: smtpSubject, message });
+        let smtpText = smtpTemplate({ name, from, subject, message });
 
+        let smtpSubject = config.FORM_TO_SMTP_SUBJECT.replace("{subject}", subject);
         try {
             let mailOptions = {
                 from: config.FROM_EMAIL,
