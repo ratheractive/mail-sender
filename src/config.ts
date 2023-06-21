@@ -14,6 +14,16 @@ function ensure(key: string, defaultValue?: string): string {
     return value;
 }
 
+const CONFIRMATION_TEMPLATE = ensure(
+    'CONFIRMATION_TEMPLATE',
+    path.resolve(__dirname, '..', 'templates', 'form-received-confirmation.hbs')
+)
+
+const FORM_TO_SMTP_TEMPLATE = ensure(
+    'FORM_TO_SMTP_TEMPLATE',
+    path.resolve(__dirname, '..', 'templates', 'form-to-smtp-text.hbs')
+)
+
 export default {
     PORT: ensure('PORT', '3000'),
     DUMMY_MODE: ensure('DUMMY_MODE', 'false') == 'true',
@@ -25,7 +35,7 @@ export default {
     TO_EMAIL: ensure('TO_EMAIL'),
     CORS_ORIGINS: ensure('CORS_ORIGINS', '*').split(','),
     CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'RE: {subject}'),
-    CONFIRMATION_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-received-confirmation.hbs'), 'utf-8'),
+    CONFIRMATION_TEMPLATE: readFileSync(CONFIRMATION_TEMPLATE, 'utf-8'),
     FORM_TO_SMTP_SUBJECT: ensure('FORM_TO_SMTP_SUBJECT', 'From Web Form: "{subject}"'),
-    FORM_TO_SMTP_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-to-smtp-text.hbs'), 'utf-8')
+    FORM_TO_SMTP_TEMPLATE: readFileSync(FORM_TO_SMTP_TEMPLATE, 'utf-8')
 };
