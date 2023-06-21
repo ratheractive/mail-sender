@@ -1,3 +1,4 @@
+process.env.DOTENV_PATH = '.inexistent';
 process.env.SMTP_HOST= 'smtp.host.local';
 process.env.SMTP_USER = 'test_user';
 process.env.SMTP_PASSWORD = 'test_pass';

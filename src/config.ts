@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { readFileSync } from 'fs';
 import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: process.env.DOTENV_PATH ?? ".env" });
 
 function ensure(key: string, defaultValue?: string): string {
     const value = process.env[key] || defaultValue;
