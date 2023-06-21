@@ -28,38 +28,40 @@ let transporter = nodemailer.createTransport({
 
 console.log('SMTP transport created.');
 
+const stringTpl = (tpl: string, values: { [key: string]: string }): string => {
+    return Object.entries(values)
+        .reduce((agr, [key, value]) => agr.replaceAll(`{${key}}`, value), tpl);
+}
+
+const hbsTpl = (path: string, values: { [key: string]: string }): string => {
+    let template = Handlebars.compile(path);
+    return template(values);
+}
+
 const sendMail = (mailOptions: Mail.Options): Promise<SentMessageInfo> => {
-    if(config.DUMMY_MODE){
-        return Promise.resolve<SentMessageInfo>({messageId: "message-id"})
+    if (config.DUMMY_MODE) {
+        return Promise.resolve<SentMessageInfo>({ messageId: "message-id" })
     }
     return transporter.sendMail(mailOptions)
 }
 
-const sendConfirmationEmail = async (from: string, name: string, subject: string, originalMessage: string) => {
-    let confirmationSubject = config.CONFIRMATION_SUBJECT.replace("{subject}", subject);
-    let template = Handlebars.compile(config.CONFIRMATION_TEMPLATE);
-    let confirmationText = template({ name, subject, originalMessage });
-
-    let confirmationMailOptions = {
-        from: config.FROM_EMAIL,
-        to: from,
-        subject: confirmationSubject,
-        text: confirmationText
-    };
+const sendConfirmationEmail = async (options: { from: string, name: string, subject: string, message: string }) => {
+    let subject = stringTpl(config.CONFIRMATION_SUBJECT, options);
+    let text = hbsTpl(config.CONFIRMATION_TEMPLATE, options);
 
     try {
-        let confirmationInfo = await sendMail(confirmationMailOptions);
+        let confirmationInfo = await sendMail({
+            from: config.FROM_EMAIL,
+            to: options.from,
+            subject,
+            text
+        });
+
         console.log(`Confirmation email sent: ${confirmationInfo.messageId}`);
     } catch (err) {
         console.error('Error sending confirmation email:', err);
     }
 }
-
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        "status": "ok"
-    })
-});
 
 app.post('/send-mail', upload.none(),
     body('from').isEmail().withMessage('From is not a valid email'),
@@ -79,23 +81,19 @@ app.post('/send-mail', upload.none(),
 
         console.log(`Sending email from`);
 
-        let smtpTemplate = Handlebars.compile(config.FORM_TO_SMTP_TEMPLATE);
-        let smtpText = smtpTemplate({ name, from, subject, message });
+        let smtpSubject = stringTpl(config.FORM_TO_SMTP_SUBJECT, req.body);
+        let smtpText = hbsTpl(config.FORM_TO_SMTP_TEMPLATE, req.body);
 
-        let smtpSubject = config.FORM_TO_SMTP_SUBJECT.replace("{subject}", subject);
         try {
-            let mailOptions = {
+            let info = await sendMail({
                 from: config.FROM_EMAIL,
                 to: config.TO_EMAIL,
                 subject: smtpSubject,
                 text: smtpText
-            };
-
-            let info = await sendMail(mailOptions);
+            });
             console.log(`Email sent: ${info.messageId}`);
 
-            // Sending confirmation email is now separate from the main logic
-            sendConfirmationEmail(from, name, subject, message);
+            sendConfirmationEmail({ from, name, subject, message });
 
             res.status(200).json({
                 message: 'Email sent',
@@ -108,6 +106,13 @@ app.post('/send-mail', upload.none(),
     });
 
 if (process.env.TS_JEST == undefined) {
+
+    app.get('/health', (req, res) => {
+        res.status(200).json({
+            "status": "ok"
+        })
+    });
+
     const server = app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
 
     ['SIGHUP', 'SIGINT', 'SIGTERM'].forEach((signal) => {

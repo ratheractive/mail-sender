@@ -24,7 +24,7 @@ export default {
     FROM_EMAIL: ensure('FROM_EMAIL'),
     TO_EMAIL: ensure('TO_EMAIL'),
     CORS_ORIGINS: ensure('CORS_ORIGINS', '*').split(','),
-    CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'Confirmation: Your email regarding "{subject}" was received'),
+    CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'RE: {subject}'),
     CONFIRMATION_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-received-confirmation.hbs'), 'utf-8'),
     FORM_TO_SMTP_SUBJECT: ensure('FORM_TO_SMTP_SUBJECT', 'From Web Form: "{subject}"'),
     FORM_TO_SMTP_TEMPLATE: readFileSync(path.resolve(__dirname, '..', 'templates', 'form-to-smtp-text.hbs'), 'utf-8')

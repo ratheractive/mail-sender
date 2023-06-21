@@ -1,10 +1,10 @@
 process.env.DOTENV_PATH = '.inexistent';
-process.env.SMTP_HOST= 'smtp.host.local';
+process.env.SMTP_HOST = 'smtp.host.local';
 process.env.SMTP_USER = 'test_user';
 process.env.SMTP_PASSWORD = 'test_pass';
 process.env.TO_EMAIL = 'toemail@mydomain.test';
-process.env.FROM_EMAIL= 'from@domain.test';
-process.env.DUMMY_MODE= 'false';
+process.env.FROM_EMAIL = 'from@domain.test';
+process.env.DUMMY_MODE = 'false';
 
 import request from 'supertest';
 import app from '../src/app'; // export your Express application from your server file
@@ -37,21 +37,24 @@ describe('POST /send-mail', () => {
     expect(res.body).toHaveProperty('message');
     expect(res.body).toHaveProperty('messageId');
     expect(mockSendMail).toHaveBeenCalledTimes(2)
-    expect(mockSendMail).toHaveBeenNthCalledWith(1, "from@domain.test", "toemail@mydomain.test", "From Web Form: \"No Subject\"", `Message from Anonymous (client@external.com)
-
+    expect(mockSendMail).toHaveBeenNthCalledWith(1, "from@domain.test", "toemail@mydomain.test", "From Web Form: \"No Subject\"", `From: Anonymous (client@external.com)
 Subject: No Subject
-
 Message:
 Test message
 `);
-    expect(mockSendMail).toHaveBeenNthCalledWith(2, "from@domain.test", "client@external.com", "Confirmation: Your email regarding \"No Subject\" was received", `Hi Anonymous,
+    expect(mockSendMail).toHaveBeenNthCalledWith(2, "from@domain.test", "client@external.com", "RE: No Subject", `Hi Anonymous,
 
-We have received your email with the subject \"No Subject\". Here is a copy of your message:
+Thank you for reaching out. We'll get back to you as soon as we can.
 
+For your own benefit, here are the details of your message.
+
+From: Anonymous (client@external.com)
+Subject: No Subject
+Message:
 Test message
 
-Best regards,
-Your Team`);
+Have a great day,
+`);
   });
 
   it.each([
