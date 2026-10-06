@@ -8,6 +8,7 @@ This is a very simple post api which allows you to send emails to one specific a
 * form data and json are supported as content
 * both receive confirmation email and the smtp forward emails are templatable
 * `CORS_ORIGINS` is `*` (the default) or a comma-separated list of exact origins
+* `GET /health` answers `{"status":"ok","version":"<release tag>"}`, so you can tell which build is running
 
 ## Spam protection
 

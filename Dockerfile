@@ -13,6 +13,8 @@ USER nobody
 WORKDIR /opt/app
 ENV NODE_ENV=production
 ENV PORT=80
+ARG VERSION=dev
+ENV APP_VERSION=$VERSION
 
 COPY --chown=nobody --from=builder /opt/app/dist /opt/app/dist
 COPY --chown=nobody --from=builder /opt/app/templates /opt/app/templates

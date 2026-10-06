@@ -22,6 +22,13 @@ jest.mock('nodemailer', () => {
   };
 });
 
+describe('GET /health', () => {
+  it('reports the build version, "dev" outside an image', async () => {
+    const res = await request(app).get('/health').expect(200);
+    expect(res.body).toEqual({ status: 'ok', version: 'dev' });
+  });
+});
+
 describe('POST /send-mail', () => {
   beforeEach(() => mockSendMail.mockClear());
 
