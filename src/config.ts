@@ -69,5 +69,7 @@ export default {
     FORM_TO_SMTP_SUBJECT: ensure('FORM_TO_SMTP_SUBJECT', 'From Web Form: "{subject}"'),
     FORM_TO_SMTP_TEMPLATE: readFileSync(FORM_TO_SMTP_TEMPLATE, 'utf-8'),
     HONEYPOT_FIELD: ensure('HONEYPOT_FIELD', ''),
-    MIN_SUBMIT_SECONDS: Number(ensure('MIN_SUBMIT_SECONDS', '0'))
+    MIN_SUBMIT_SECONDS: Number(ensure('MIN_SUBMIT_SECONDS', '0')),
+    // Baked into the image from the release tag, so /health says which build is running.
+    VERSION: ensure('APP_VERSION', 'dev')
 };
