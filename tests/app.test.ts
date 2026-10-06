@@ -23,6 +23,8 @@ jest.mock('nodemailer', () => {
 });
 
 describe('POST /send-mail', () => {
+  beforeEach(() => mockSendMail.mockClear());
+
   it('responds with json', async () => {
     const reqBody = {
       from: 'client@external.com',
@@ -42,12 +44,28 @@ Subject: No Subject
 Message:
 Test message
 `);
-    expect(mockSendMail).toHaveBeenNthCalledWith(2, "from@domain.test", "client@external.com", "RE: No Subject", `Hi Anonymous,
+    expect(mockSendMail).toHaveBeenNthCalledWith(2, "from@domain.test", "client@external.com", "We received your message", `Hi,
 
 Thank you for reaching out. We'll get back to you as soon as we can.
 
 Have a great day,
 `);
+  });
+
+  it('repeats nothing the visitor typed in the confirmation', async () => {
+    await request(app)
+      .post('/send-mail')
+      .send({
+        from: 'victim@external.com',
+        name: 'Visit http://spam.test',
+        subject: 'Cheap pills',
+        message: 'Buy now at http://spam.test',
+      })
+      .expect(200);
+
+    const [, to, subject, text] = mockSendMail.mock.calls[1];
+    expect(to).toBe('victim@external.com');
+    expect(`${subject}\n${text}`).not.toMatch(/spam\.test|Cheap pills|Buy now/);
   });
 
   it.each([
