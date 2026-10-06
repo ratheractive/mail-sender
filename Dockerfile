@@ -1,18 +1,18 @@
-FROM node:16-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /opt/app
 COPY package.json yarn.lock ./
-RUN yarn install --ignore-optional
+RUN yarn install --frozen-lockfile --ignore-optional
 COPY . .
 RUN yarn test
 RUN yarn build
 
-FROM node:16-alpine
+FROM node:24-alpine
 COPY package.json yarn.lock ./
-RUN yarn install --prod --ignore-scripts
+RUN yarn install --frozen-lockfile --prod --ignore-scripts
 USER nobody
 WORKDIR /opt/app
-ENV NODE_ENV production
-ENV PORT 80
+ENV NODE_ENV=production
+ENV PORT=80
 
 COPY --chown=nobody --from=builder /opt/app/dist /opt/app/dist
 COPY --chown=nobody --from=builder /opt/app/templates /opt/app/templates

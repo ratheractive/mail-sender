@@ -7,14 +7,15 @@ import multer from 'multer';
 import { body, validationResult } from 'express-validator';
 const upload = multer();
 
-const sendConfirmationEmail = async (options: { from: string, name: string, subject: string, message: string }) => {
-  let subject = stringTpl(config.CONFIRMATION_SUBJECT, options);
-  let text = hbsTpl(config.CONFIRMATION_TEMPLATE, options);
+// Rendered with the recipient's address alone: see ensureNoVisitorText in config.
+const sendConfirmationEmail = async (to: string) => {
+  let subject = stringTpl(config.CONFIRMATION_SUBJECT, { from: to });
+  let text = hbsTpl(config.CONFIRMATION_TEMPLATE, { from: to });
 
   try {
       let confirmationInfo = await sendMail({
           from: config.FROM_EMAIL,
-          to: options.from,
+          to,
           subject,
           text
       });
@@ -50,7 +51,7 @@ export const sendMailController = (app: express.Express) => {
             return res.status(422).json({ errors: errors.array() });
         }
 
-        const { from, subject, message, name } = req.body;
+        const { from } = req.body;
 
         console.log(`Sending email from`);
 
@@ -66,7 +67,7 @@ export const sendMailController = (app: express.Express) => {
             });
             console.log(`Email sent: ${info.messageId}`);
 
-            sendConfirmationEmail({ from, name, subject, message });
+            sendConfirmationEmail(from);
 
             res.status(200).json({
                 message: 'Email sent',
