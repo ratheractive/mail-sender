@@ -46,13 +46,6 @@ Test message
 
 Thank you for reaching out. We'll get back to you as soon as we can.
 
-For your own benefit, here are the details of your message.
-
-From: Anonymous (client@external.com)
-Subject: No Subject
-Message:
-Test message
-
 Have a great day,
 `);
   });

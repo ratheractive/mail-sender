@@ -8,6 +8,20 @@ This is a very simple post api which allows you to send emails to one specific a
 * form data and json are supported as content
 * both receive confirmation email and the smtp forward emails are templatable
 
+## Spam protection
+
+Both checks are off unless configured. A submission that fails one gets the same `200` and
+response body as a delivered one, so a bot learns nothing, and no email is sent.
+
+* `HONEYPOT_FIELD` - name of a field the form hides from people (off-screen, `aria-hidden`,
+  `tabindex="-1"`, `autocomplete="off"`). It must be present and empty: filled means a bot
+  completed it, missing means a bot posted only the visible fields straight to this endpoint.
+* `MIN_SUBMIT_SECONDS` - the form sends `elapsed_ms`, the time since it was shown; anything
+  faster, or without it, is dropped. Measured by the page, so client clock skew does not matter.
+
+The confirmation email goes to whatever address the visitor typed, so it should not repeat
+their message: with that, anyone could use the form to deliver their own text to a third party.
+
 ## TO DO IN THE FUTURE
 
 * security
