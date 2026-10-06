@@ -2,6 +2,7 @@ import express from 'express';
 import { hbsTpl, stringTpl } from '../services/templates';
 import config from '../config';
 import { sendMail } from '../services/sendMail';
+import { fakeMessageId, spamReason } from '../services/spamCheck';
 import multer from 'multer';
 import { body, validationResult } from 'express-validator';
 const upload = multer();
@@ -32,6 +33,16 @@ export const sendMailController = (app: express.Express) => {
     body('name').default('Anonymous'),
     async (req, res) => {
         console.log('Received a new request.');
+
+        // Answer a bot exactly like a delivered message, so it learns nothing.
+        const spam = spamReason(req.body);
+        if (spam) {
+            console.log(`Dropped as spam: ${spam}`);
+            return res.status(200).json({
+                message: 'Email sent',
+                messageId: fakeMessageId(),
+            });
+        }
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

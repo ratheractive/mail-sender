@@ -37,5 +37,7 @@ export default {
     CONFIRMATION_SUBJECT: ensure('CONFIRMATION_SUBJECT', 'RE: {subject}'),
     CONFIRMATION_TEMPLATE: readFileSync(CONFIRMATION_TEMPLATE, 'utf-8'),
     FORM_TO_SMTP_SUBJECT: ensure('FORM_TO_SMTP_SUBJECT', 'From Web Form: "{subject}"'),
-    FORM_TO_SMTP_TEMPLATE: readFileSync(FORM_TO_SMTP_TEMPLATE, 'utf-8')
+    FORM_TO_SMTP_TEMPLATE: readFileSync(FORM_TO_SMTP_TEMPLATE, 'utf-8'),
+    HONEYPOT_FIELD: ensure('HONEYPOT_FIELD', ''),
+    MIN_SUBMIT_SECONDS: Number(ensure('MIN_SUBMIT_SECONDS', '0'))
 };
