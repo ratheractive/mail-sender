@@ -1,6 +1,5 @@
-import nodemailer, { SentMessageInfo } from 'nodemailer';
+import nodemailer, { SendMailOptions } from 'nodemailer';
 import config from '../config';
-import { Options } from 'nodemailer/lib/mailer';
 
 let transporter = nodemailer.createTransport({
   host: config.SMTP_HOST,
@@ -12,9 +11,10 @@ let transporter = nodemailer.createTransport({
   }
 });
 
-export const sendMail = (mailOptions: Options): Promise<SentMessageInfo> => {
+// Only the message id is read from the result, which keeps DUMMY_MODE's stand-in honest.
+export const sendMail = (mailOptions: SendMailOptions): Promise<{ messageId: string }> => {
   if (config.DUMMY_MODE) {
-      return Promise.resolve<SentMessageInfo>({ messageId: "message-id" })
+      return Promise.resolve({ messageId: "message-id" })
   }
   return transporter.sendMail(mailOptions)
 }
